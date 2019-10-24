@@ -1,0 +1,9 @@
+{
+  "name": "acti/custom-page-archive",
+  "type": "wordpress-plugin",
+  "description": "Plugin to set page as archive page of custom post types",
+  "minimum-stability": "dev",
+  "require": {
+    "composer/installers": "^1.7"
+  }
+}
