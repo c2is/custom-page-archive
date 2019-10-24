@@ -2,8 +2,9 @@
   /**
    * Plugin Name:       Custom post type archive
    * Description:       Customize post type archive pages
-   * Version:           0.1
-   * Author:            Torink
+   * Version:           1.0
+   * Author:            Acti
+   * Author URI:        https://www.acti.fr/
    * Text Domain:       menu-page-archive
    * Domain Path:       /languages
    */
