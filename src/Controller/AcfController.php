@@ -9,7 +9,7 @@ final class AcfController
     public function __construct()
     {
         add_filter('acf/location/rule_values/page_type', array($this, 'setArchivePageChoices'));
-        add_filter('acf/location/rule_match/page_type', array($this, 'matchArchivePageChoice'), 10, 4);
+        add_filter('acf/location/rule_match/page_type', array($this, 'matchArchivePageChoice'), 10, 2);
     }
 
     public function setArchivePageChoices($choices)
@@ -25,13 +25,15 @@ final class AcfController
 
     public function matchArchivePageChoice($match, $rule)
     {
-        $currentPostId = get_the_ID();
-        $selectedPostId = get_option($rule['value']);
+        if (strpos($rule['value'], 'cpa_') !== false) {
+            $currentPostId = get_the_ID();
+            $selectedPostId = get_option($rule['value']);
 
-        if ($rule['operator'] == "==") {
-            $match = ($currentPostId == $selectedPostId);
-        } elseif ($rule['operator'] == "!=") {
-            $match = ($currentPostId != $selectedPostId);
+            if ($rule['operator'] == "==") {
+                $match = ($currentPostId == $selectedPostId);
+            } elseif ($rule['operator'] == "!=") {
+                $match = ($currentPostId != $selectedPostId);
+            }
         }
 
         return $match;

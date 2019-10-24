@@ -34,7 +34,7 @@ final class QueryController
    */
     public function setCustomArchivePagePost($post, $query)
     {
-        if (is_admin()) {
+        if (is_admin() || is_front_page() || is_home()) {
             return $post;
         }
 
@@ -53,11 +53,11 @@ final class QueryController
    */
     public function detectCustomArchivePage($wp_query)
     {
-        if (is_admin()) {
+        if (is_admin() || !$wp_query->is_main_query()) {
             return $wp_query;
         }
 
-        if ($wp_query->is_page()) {
+        if ($wp_query->is_page() && $wp_query->get_queried_object_id()) {
             $postTypes = PostTypeHelper::getArchivesPostTypes();
             foreach ($postTypes as $postType => $label) {
                 if ($wp_query->get_queried_object_id() == get_option('cpa_' . $postType)) {
