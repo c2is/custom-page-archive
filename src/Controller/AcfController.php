@@ -3,6 +3,7 @@
   namespace CPA\Controller;
 
 use CPA\Helper\PostTypeHelper;
+use CPA\Helper\TaxonomyHelper;
 
 final class AcfController
 {
@@ -14,10 +15,16 @@ final class AcfController
 
     public function setArchivePageChoices($choices)
     {
-        $pageArchivesIds = PostTypeHelper::getArchivesPostTypesPages();
-        foreach ($pageArchivesIds as $pageArchiveId => $pageArchive) {
+        $postTypeArchivesIds = PostTypeHelper::getArchivesPostTypesPages();
+        foreach ($postTypeArchivesIds as $pageArchiveId => $pageArchive) {
             $postType = PostTypeHelper::getArchivePostTypeById($pageArchiveId);
             $choices['cpa_' . $postType] = __('Page des', 'custom-page-archive') . ' ' . strtolower($pageArchive);
+        }
+
+        $taxonomyArchivesIds = TaxonomyHelper::getArchivesTaxonomiesPages();
+        foreach ($taxonomyArchivesIds as $pageArchiveId => $pageArchive) {
+            $postType = TaxonomyHelper::getArchiveTaxonomyById($pageArchiveId);
+            $choices['cpat_' . $postType] = __('Page des', 'custom-page-archive') . ' ' . strtolower($pageArchive);
         }
 
         return $choices;

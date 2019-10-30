@@ -3,6 +3,7 @@
   namespace CPA\Controller;
 
 use CPA\Helper\PostTypeHelper;
+use CPA\Helper\TaxonomyHelper;
 
 final class AdminPostListController
 {
@@ -13,7 +14,9 @@ final class AdminPostListController
 
     public function displayArchiveStates($states, $post)
     {
-        $pageArchivesIds = PostTypeHelper::getArchivesPostTypesPages();
+        $postTypeArchivesIds = PostTypeHelper::getArchivesPostTypesPages();
+        $taxonomyArchivesIds = TaxonomyHelper::getArchivesTaxonomiesPages();
+        $pageArchivesIds = $postTypeArchivesIds + $taxonomyArchivesIds;
         if (array_key_exists($post->ID, $pageArchivesIds)) {
             $states[] = __('Page des', 'custom-page-archive') . ' ' . strtolower($pageArchivesIds[$post->ID]);
         }

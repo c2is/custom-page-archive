@@ -3,6 +3,7 @@
   namespace CPA\Controller;
 
 use CPA\Helper\PostTypeHelper;
+use CPA\Helper\TaxonomyHelper;
 
 final class AdminPostController
 {
@@ -17,6 +18,9 @@ final class AdminPostController
     public function setupFlushRewriteRules($postId)
     {
         $isPageArchive = PostTypeHelper::getArchivePostTypeById($postId);
+        if ($isPageArchive) {
+            $isPageArchive = TaxonomyHelper::getArchiveTaxonomyById($postId);
+        }
         if (!$isPageArchive) {
             return;
         }

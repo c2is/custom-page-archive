@@ -3,6 +3,7 @@
   namespace CPA\Controller;
 
 use CPA\Helper\PostTypeHelper;
+use CPA\Helper\TaxonomyHelper;
 
 final class MenuController
 {
@@ -32,6 +33,7 @@ final class MenuController
         }
 
         $postTypes = PostTypeHelper::getArchivesPostTypes();
+        $taxonomies = TaxonomyHelper::getArchivesTaxonomies();
         $title = __('Menu Page Archive Settings', 'custom-page-archive');
 
         require_once(CPA_SRC_PATH . '/Templates/adminMenu.php');
@@ -47,7 +49,17 @@ final class MenuController
                 array($this, 'sanitize')
             );
         }
-        $this->_checkSetting();
+
+        $taxonomies = TaxonomyHelper::getArchivesTaxonomies();
+        foreach ($taxonomies as $taxonomy => $label) {
+            register_setting(
+                self::SETTING_GROUP,
+                'cpat_' . $taxonomy,
+                array($this, 'sanitize')
+            );
+        }
+        $this->_checkSettings();
+        flush_rewrite_rules();
     }
 
     public function sanitize($input)
@@ -55,13 +67,16 @@ final class MenuController
         return absint($input);
     }
 
-    private function _checkSetting()
+    private function _checkSettings()
     {
-        global $settings_errors;
+        $registeredPostTypeArchives = PostTypeHelper::getActiveCustomPostTypePageArchives();
+        if (count($registeredPostTypeArchives) != count(array_unique($registeredPostTypeArchives))) {
+            add_settings_error(self::SETTING_GROUP, 'same_page_error', __('Pages of post type must not be the same.', 'custom-page-archive'), 'error');
+        }
 
-        $registeredArchives = PostTypeHelper::getActiveCustomPostTypePageArchives();
-        if (count($registeredArchives) != count(array_unique($registeredArchives))) {
-            add_settings_error(self::SETTING_GROUP, 'same_page_error', __('Pages must not be the same.', 'custom-page-archive'), 'error');
+        $registeredTaxonomyArchives = TaxonomyHelper::getArchivesTaxonomiesPages();
+        if (count($registeredTaxonomyArchives) != count(array_unique($registeredTaxonomyArchives))) {
+            add_settings_error(self::SETTING_GROUP, 'same_page_error', __('Pages of taxonomy must not be the same.', 'custom-page-archive'), 'error');
         }
     }
 }

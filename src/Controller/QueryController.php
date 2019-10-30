@@ -11,6 +11,7 @@ final class QueryController
         add_action('parse_query', array($this, 'detectCustomArchivePage'), 1);
         add_action('the_post', array($this, 'setCustomArchivePagePost'), 1, 2);
         add_filter('template_include', array($this, 'addCustomTemplate'));
+        add_filter('post_type_archive_link', array($this, 'changeArchiveLink'), 10, 2);
     }
 
     public function addCustomTemplate($templatePath)
@@ -80,6 +81,17 @@ final class QueryController
             $wp_query->queried_object = get_post($postId);
         }
 
+        d($wp_query);die;
         return $wp_query;
+    }
+
+    public function changeArchiveLink($link, $postType)
+    {
+        $pageId = get_option('cpa_' . $postType);
+        if ($pageId) {
+            return get_permalink($pageId);
+        }
+
+        return $link;
     }
 }
