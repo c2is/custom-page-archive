@@ -1,97 +1,96 @@
 <?php
 
-  namespace CPA\Controller;
+    namespace CPA\Controller;
 
-use CPA\Helper\PostTypeHelper;
+    use CPA\Helper\PostTypeHelper;
 
-final class QueryController
-{
-    public function __construct()
+    final class QueryController
     {
-        add_action('parse_query', array($this, 'detectCustomArchivePage'), 1);
-        add_action('the_post', array($this, 'setCustomArchivePagePost'), 1, 2);
-        add_filter('template_include', array($this, 'addCustomTemplate'));
-        add_filter('post_type_archive_link', array($this, 'changeArchiveLink'), 10, 2);
-    }
-
-    public function addCustomTemplate($templatePath)
-    {
-        if (get_query_var('page_for_custom_post_archive')) {
-            $postType = get_query_var('page_for_custom_post_archive');
-            $templates = array(
-            'archive-' . $postType . '.php',
-            'archive.php'
-            );
-            $templatePath = get_query_template('archive', $templates);
+        public function __construct()
+        {
+            add_action('parse_query', array($this, 'detectCustomArchivePage'), 1);
+            add_action('the_post', array($this, 'setCustomArchivePagePost'), 1, 2);
+            add_filter('template_include', array($this, 'addCustomTemplate'));
+            add_filter('post_type_archive_link', array($this, 'changeArchiveLink'), 10, 2);
         }
 
-        return $templatePath;
-    }
+        public function addCustomTemplate($templatePath)
+        {
+            if (get_query_var('page_for_custom_post_archive')) {
+                $postType = get_query_var('page_for_custom_post_archive');
+                $templates = array(
+                    'archive-' . $postType . '.php',
+                    'archive.php'
+                );
+                $templatePath = get_query_template('archive', $templates);
+            }
 
-  /**
-   * @param $post WP_Post
-   * @param $query WP_Query
-   * @return int[]|WP_Post[]
-   */
-    public function setCustomArchivePagePost($post, $query)
-    {
-        if (is_admin() || is_front_page() || is_home()) {
+            return $templatePath;
+        }
+
+        /**
+         * @param $post WP_Post
+         * @param $query WP_Query
+         * @return int[]|WP_Post[]
+         */
+        public function setCustomArchivePagePost($post, $query)
+        {
+            if (is_admin() || is_front_page() || is_home()) {
+                return $post;
+            }
+
+            if ($query->is_post_type_archive()) {
+                $postType = $query->get('post_type');
+                $pageId = get_option('cpa_' . $postType);
+                $post = get_post($pageId);
+            }
+
             return $post;
         }
 
-        if ($query->is_post_type_archive()) {
-            $postType = $query->get('post_type');
-            $pageId = get_option('cpa_' . $postType);
-            $post = get_post($pageId);
-        }
+        /**
+         * @param $wp_query \WP_Query
+         * @return mixed
+         */
+        public function detectCustomArchivePage($wp_query)
+        {
+            if (is_admin() || !$wp_query->is_main_query()) {
+                return $wp_query;
+            }
 
-        return $post;
-    }
+            if ($wp_query->is_page() && $wp_query->get_queried_object_id()) {
+                $postTypes = PostTypeHelper::getArchivesPostTypes();
+                foreach ($postTypes as $postType => $label) {
+                    if ($wp_query->get_queried_object_id() == get_option('cpa_' . $postType)) {
+                        $wp_query->query = array(
+                            'post_type' => $postType
+                        );
 
-  /**
-   * @param $wp_query \WP_Query
-   * @return mixed
-   */
-    public function detectCustomArchivePage($wp_query)
-    {
-        if (is_admin() || !$wp_query->is_main_query()) {
+                        $wp_query->is_page = false;
+                        $wp_query->is_singular = false;
+                        $wp_query->is_archive = true;
+                        $wp_query->is_post_type_archive = true;
+                        $wp_query->set('post_type', $postType);
+                        $wp_query->set('pagename', '');
+                        break;
+                    }
+                }
+            } elseif (!$wp_query->get_queried_object_id() && $wp_query->is_post_type_archive && get_option('cpa_' . $wp_query->get('post_type'))) {
+                $postId = get_option('cpa_' . $wp_query->get('post_type'));
+                $wp_query->queried_object_id = intval($postId);
+                $wp_query->queried_object = get_post($postId);
+            }
+
             return $wp_query;
         }
 
-        if ($wp_query->is_page() && $wp_query->get_queried_object_id()) {
-            $postTypes = PostTypeHelper::getArchivesPostTypes();
-            foreach ($postTypes as $postType => $label) {
-                if ($wp_query->get_queried_object_id() == get_option('cpa_' . $postType)) {
-                    $wp_query->query = array(
-                      'post_type' => $postType
-                    );
-
-                    $wp_query->is_page = false;
-                    $wp_query->is_singular = false;
-                    $wp_query->is_archive = true;
-                    $wp_query->is_post_type_archive = true;
-                    $wp_query->set('post_type', $postType);
-                    $wp_query->set('pagename', '');
-                    break;
-                }
+        public function changeArchiveLink($link, $postType)
+        {
+            $pageId = get_option('cpa_' . $postType);
+            if ($pageId) {
+                return get_permalink($pageId);
             }
-        } elseif (!$wp_query->get_queried_object_id() && $wp_query->is_post_type_archive && get_option('cpa_' . $wp_query->get('post_type'))) {
-            $postId = get_option('cpa_' . $wp_query->get('post_type'));
-            $wp_query->queried_object_id = intval($postId);
-            $wp_query->queried_object = get_post($postId);
+
+            return $link;
         }
-
-        d($wp_query);die;
-        return $wp_query;
     }
-
-    public function changeArchiveLink($link, $postType)
-    {
-        $pageId = get_option('cpa_' . $postType);
-        if ($pageId) {
-            return get_permalink($pageId);
-        }
-
-        return $link;
-    }
-}
