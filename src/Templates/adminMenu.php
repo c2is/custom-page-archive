@@ -6,11 +6,10 @@
     <?php do_settings_sections('cpa-settings-group'); ?>
     <table class="form-table" role="presentation">
       <tr>
-        <h2><?php echo __('Types de posts', 'custom-page-archive'); ?></h2>
         <ul>
             <?php foreach ($postTypes as $postType => $label) : ?>
             <li>
-              <label for="pages_for_cpt">
+              <label for="page_on_front">
                 <?php
                   printf(
                       $label . ' : %s',
@@ -28,31 +27,6 @@
               </label>
             </li>
             <?php endforeach; ?>
-        </ul>
-      </tr>
-      <tr>
-        <h2><?php echo __('Taxonomies', 'custom-page-archive'); ?></h2>
-        <ul>
-          <?php foreach ($taxonomies as $taxonomy => $label) : ?>
-            <li>
-              <label for="pages_for_terms">
-                <?php
-                  printf(
-                    $label . ' : %s',
-                    wp_dropdown_pages(
-                      array(
-                        'name' => 'cpat_' . $taxonomy,
-                        'echo' => 0,
-                        'show_option_none' => __('&mdash; Select &mdash;'),
-                        'option_none_value' => '0',
-                        'selected' => get_option('cpat_' . $taxonomy)
-                      )
-                    )
-                  );
-                ?>
-              </label>
-            </li>
-          <?php endforeach; ?>
         </ul>
       </tr>
     </table>
