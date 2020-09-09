@@ -25,8 +25,9 @@
             );
             $postTypesObjects = get_post_types($args, 'objects');
             $postTypesPages = [];
+            $prefix = LanguageHelper::getPrefix();
             foreach ($postTypesObjects as $postType) {
-                $value = get_option('cpa_' . $postType->name);
+                $value = get_option($prefix . $postType->name);
                 if ($value) {
                     $postTypesPages[$value] = $postType->label;
                 }
@@ -40,9 +41,10 @@
             $args = array(
                 '_builtin'            => false
             );
+            $prefix = LanguageHelper::getPrefix();
             $postTypesObjects = get_post_types($args, 'objects');
             foreach ($postTypesObjects as $postType) {
-                $value = get_option('cpa_' . $postType->name);
+                $value = get_option($prefix . $postType->name);
                 if ($value == $id) {
                     return $postType->name;
                 }
@@ -58,8 +60,9 @@
             );
             $postTypesObjects = get_post_types($args, 'objects');
             $customPostTypePages = [];
+            $prefix = LanguageHelper::getPrefix();
             foreach ($postTypesObjects as $postType) {
-                $value = get_option('cpa_' . $postType->name);
+                $value = get_option($prefix . $postType->name);
                 if ($value) {
                     $customPostTypePages[$postType->name] = $value;
                 }

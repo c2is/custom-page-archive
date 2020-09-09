@@ -6,6 +6,7 @@
   use CPA\Controller\AdminPostListController;
   use CPA\Controller\AdminPostController;
   use CPA\Controller\MenuController;
+  use CPA\Controller\PolylangController;
   use CPA\Controller\QueryController;
   use CPA\Controller\PostController;
   use CPA\Controller\RewriteRulesController;
@@ -24,5 +25,8 @@
         new QueryController();
         new PostController();
         new RewriteRulesController();
+
+        /** Languages **/
+        new PolylangController();
     }
 }

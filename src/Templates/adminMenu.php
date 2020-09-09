@@ -15,11 +15,11 @@
                       $label . ' : %s',
                       wp_dropdown_pages(
                           array(
-                          'name' => 'cpa_' . $postType,
+                          'name' => $prefix . $postType,
                           'echo' => 0,
                           'show_option_none' => __('&mdash; Select &mdash;'),
                           'option_none_value' => '0',
-                          'selected' => get_option('cpa_' . $postType)
+                          'selected' => get_option($prefix . $postType)
                           )
                       )
                   );

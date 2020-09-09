@@ -2,6 +2,7 @@
 
   namespace CPA\Controller;
 
+use CPA\Helper\LanguageHelper;
 use CPA\Helper\PostTypeHelper;
 
 final class QueryController
@@ -41,7 +42,8 @@ final class QueryController
 
         if ($query->is_post_type_archive()) {
             $postType = $query->get('post_type');
-            $pageId = get_option('cpa_' . $postType);
+            $prefix = LanguageHelper::getPrefix();
+            $pageId = get_option($prefix . $postType);
             $post = get_post($pageId);
         }
 
@@ -58,10 +60,11 @@ final class QueryController
             return $wp_query;
         }
 
+        $prefix = LanguageHelper::getPrefix();
         if ($wp_query->is_page() && $wp_query->get_queried_object_id()) {
             $postTypes = PostTypeHelper::getArchivesPostTypes();
             foreach ($postTypes as $postType => $label) {
-                if ($wp_query->get_queried_object_id() == get_option('cpa_' . $postType)) {
+                if ($wp_query->get_queried_object_id() == get_option($prefix . $postType)) {
                     $wp_query->query = array(
                       'post_type' => $postType
                     );
@@ -76,7 +79,7 @@ final class QueryController
                 }
             }
         } elseif (!$wp_query->get_queried_object_id() && $wp_query->is_post_type_archive && get_option('cpa_' . $wp_query->get('post_type'))) {
-            $postId = get_option('cpa_' . $wp_query->get('post_type'));
+            $postId = get_option($prefix . $wp_query->get('post_type'));
             $wp_query->queried_object_id = intval($postId);
             $wp_query->queried_object = get_post($postId);
         }
@@ -86,7 +89,8 @@ final class QueryController
 
     public function changeArchiveLink($link, $postType)
     {
-        $pageId = get_option('cpa_' . $postType);
+        $prefix = LanguageHelper::getPrefix();
+        $pageId = get_option($prefix . $postType);
         if ($pageId) {
             return get_permalink($pageId);
         }

@@ -2,6 +2,7 @@
 
   namespace CPA\Controller;
 
+use CPA\Helper\LanguageHelper;
 use CPA\Helper\PostTypeHelper;
 
 final class AcfController
@@ -15,9 +16,10 @@ final class AcfController
     public function setArchivePageChoices($choices)
     {
         $pageArchivesIds = PostTypeHelper::getArchivesPostTypesPages();
+        $prefix = LanguageHelper::getPrefix();
         foreach ($pageArchivesIds as $pageArchiveId => $pageArchive) {
             $postType = PostTypeHelper::getArchivePostTypeById($pageArchiveId);
-            $choices['cpa_' . $postType] = __('Page des', 'custom-page-archive') . ' ' . strtolower($pageArchive);
+            $choices[$prefix . $postType] = __('Page des', 'custom-page-archive') . ' ' . strtolower($pageArchive);
         }
 
         return $choices;
