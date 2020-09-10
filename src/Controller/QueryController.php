@@ -75,13 +75,15 @@ final class QueryController
                     $wp_query->is_post_type_archive = true;
                     $wp_query->set('post_type', $postType);
                     $wp_query->set('pagename', '');
+                    $this->_setLanguageQuery($wp_query);
                     break;
                 }
             }
-        } elseif (!$wp_query->get_queried_object_id() && $wp_query->is_post_type_archive && get_option('cpa_' . $wp_query->get('post_type'))) {
+        } elseif ($wp_query->is_post_type_archive && get_option($prefix . $wp_query->get('post_type'))) {
             $postId = get_option($prefix . $wp_query->get('post_type'));
             $wp_query->queried_object_id = intval($postId);
             $wp_query->queried_object = get_post($postId);
+            $this->_setLanguageQuery($wp_query);
         }
 
         return $wp_query;
@@ -96,5 +98,19 @@ final class QueryController
         }
 
         return $link;
+    }
+
+    private function _setLanguageQuery(&$wp_query)
+    {
+      if (function_exists('pll_current_language')) {
+        $wp_query->set('lang', pll_current_language());
+        $wp_query->query['lang'] = pll_current_language();
+        foreach ($wp_query->tax_query->queries as $key => $taxonomyQuery)
+        {
+          if ($taxonomyQuery['taxonomy'] == 'language') {
+            $wp_query->tax_query->queries[$key]['terms'][0] = pll_current_language();
+          }
+        }
+      }
     }
 }

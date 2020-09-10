@@ -21,10 +21,20 @@ final class RewriteRulesController
             $urlPath = ltrim($urlPath, '/');
             $regex = "^$urlPath([^/]+)/?$";
             $query = 'index.php?post_type=' . $postType . '&name=$matches[1]';
+
             add_rewrite_rule(
-                $regex,
-                $query,
-                $position
+              $regex,
+              $query,
+              $position
+            );
+
+            $regex = "^$urlPath?$";
+            $query = 'index.php?post_type=' . $postType;
+
+            add_rewrite_rule(
+              $regex,
+              $query,
+              $position
             );
         }
     }
