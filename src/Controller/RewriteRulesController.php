@@ -1,8 +1,8 @@
 <?php
 
-  namespace CPA\Controller;
+namespace CPA\Controller;
 
-  use CPA\Helper\PostTypeHelper;
+use CPA\Helper\PostTypeHelper;
 
 final class RewriteRulesController
 {
@@ -19,22 +19,33 @@ final class RewriteRulesController
             $customArchivePageLink = get_permalink($postId);
             $urlPath = parse_url($customArchivePageLink, PHP_URL_PATH);
             $urlPath = ltrim($urlPath, '/');
-            $regex = "^$urlPath([^/]+)/?$";
-            $query = 'index.php?post_type=' . $postType . '&name=$matches[1]';
+            $urlPath = substr($urlPath, 0, -1);
 
-            add_rewrite_rule(
-              $regex,
-              $query,
-              $position
-            );
-
-            $regex = "^$urlPath?$";
+            $regex = "^$urlPath/?$";
             $query = 'index.php?post_type=' . $postType;
 
             add_rewrite_rule(
-              $regex,
-              $query,
-              $position
+                $regex,
+                $query,
+                $position
+            );
+
+            $regex = "^$urlPath/([^/]+)/?$";
+            $query = 'index.php?post_type=' . $postType . '&name=$matches[1]';
+
+            add_rewrite_rule(
+                $regex,
+                $query,
+                $position
+            );
+
+            $regex = "^$urlPath/page/([0-9]{1,})/?$";
+            $query = 'index.php?post_type=' . $postType . '&paged=$matches[1]';
+
+            add_rewrite_rule(
+                $regex,
+                $query,
+                $position
             );
         }
     }
