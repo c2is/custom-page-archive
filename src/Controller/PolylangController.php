@@ -14,7 +14,7 @@
 
         public function setTranslationUrl($url, $slug)
         {
-            if (is_singular())
+            if (is_singular() && $url)
             {
                 $postType = get_post_type();
                 $correctArchiveUrl = $this->_getPostTypeArchiveUrl($postType, $slug);
