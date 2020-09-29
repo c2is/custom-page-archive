@@ -31,13 +31,15 @@ final class RewriteRulesController
             );
 
             $regex = "^$urlPath/([^/]+)/?$";
-            $query = 'index.php?post_type=' . $postType . '&name=$matches[1]';
+            $query = 'index.php?post_type=' . $postType . '&name=$matches[1]&lang=en';
 
+//            d($regex, $query);
             add_rewrite_rule(
                 $regex,
                 $query,
                 $position
             );
+
 
             $regex = "^$urlPath/page/([0-9]{1,})/?$";
             $query = 'index.php?post_type=' . $postType . '&paged=$matches[1]';
