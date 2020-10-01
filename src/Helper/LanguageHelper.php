@@ -12,7 +12,7 @@
           $prefix .= pll_current_language('slug') . '_';
         }
       }
-      elseif (defined('ICL_LANGUAGE_CODE')) {
+      elseif (is_plugin_active('sitepress-multilingual-cms/sitepress.php')) {
         $defaultLang = apply_filters('wpml_default_language', null);
         if (ICL_LANGUAGE_CODE != $defaultLang) {
           $prefix .= ICL_LANGUAGE_CODE . '_';
@@ -30,7 +30,7 @@
           $prefix .= $slug . '_';
         }
       }
-      elseif (defined('ICL_LANGUAGE_CODE')) {
+      elseif (is_plugin_active('sitepress-multilingual-cms/sitepress.php')) {
         $defaultLang = apply_filters('wpml_default_language', null);
         if ($slug != $defaultLang) {
           $prefix .= $slug . '_';

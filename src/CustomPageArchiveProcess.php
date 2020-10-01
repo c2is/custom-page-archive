@@ -10,6 +10,7 @@
   use CPA\Controller\QueryController;
   use CPA\Controller\PostController;
   use CPA\Controller\RewriteRulesController;
+  use CPA\Controller\YoastController;
 
   final class CustomPageArchiveProcess
 {
@@ -25,6 +26,7 @@
         new QueryController();
         new PostController();
         new RewriteRulesController();
+        new YoastController();
 
         /** Languages **/
         new PolylangController();
